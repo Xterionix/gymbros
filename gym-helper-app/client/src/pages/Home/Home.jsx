@@ -13,19 +13,14 @@ export default function Home() {
   const [todaysWorkoutName, setTodaysWorkoutName] = useState("Rest Day");
 
   useEffect(() => {
-    const savedSplits = localStorage.getItem("mySplits");
-    if (savedSplits) {
-      const parsedSplits = JSON.parse(savedSplits);
-      const foundSplit = parsedSplits.find(split => 
-        split.days && split.days.includes(currentDayName)
-      );
-      if (foundSplit) {
-        setTodaysWorkoutName(foundSplit.name);
-      } else {
-        setTodaysWorkoutName("Rest Day");
-      }
+    const splits = user?.workoutTemplates || [];
+    const foundSplit = splits.find(split => split.days && split.days.includes(currentDayName));
+    if (foundSplit) {
+      setTodaysWorkoutName(foundSplit.name);
+    } else {
+      setTodaysWorkoutName("Rest Day");
     }
-  }, [currentDayName]);
+  }, [currentDayName, user?.workoutTemplates]);
 
   // --- Feature 3: Connect Real Nutrition Data ---
   const consumedCals = user?.dailyLog?.calories || 0;
@@ -42,63 +37,45 @@ export default function Home() {
   const carbsPer = goalCarbs > 0 ? Math.min((consumedCarbs / goalCarbs) * 100, 100) : 0;
   const fatsPer = goalFats > 0 ? Math.min((consumedFats / goalFats) * 100, 100) : 0;
 
-  // --- Feature 2: Weekly Activity Data ---
-  const [weeklyActivity, setWeeklyActivity] = useState(() => {
-    const savedData = localStorage.getItem("weeklyActivityData");
-    if (savedData) return JSON.parse(savedData);
-    return Array(7).fill(0).map((_, i) => ({ 
-        day: ["S", "M", "T", "W", "Th", "F", "S"][i], 
-        minutes: 0 
-    }));
-  });
-
-  useEffect(() => {
-    localStorage.setItem("weeklyActivityData", JSON.stringify(weeklyActivity));
-  }, [weeklyActivity]);
-
-  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  const [logMinutes, setLogMinutes] = useState("");
-
+  const defaultWeeklyActivity = Array(7).fill(0).map((_, i) => ({ day: ["S", "M", "T", "W", "Th", "F", "S"][i], minutes: 0 }));
+  const weeklyActivity = user?.weeklyActivity && user.weeklyActivity.length === 7 ? user.weeklyActivity : defaultWeeklyActivity;
   const maxMinutes = Math.max(...weeklyActivity.map((d) => d.minutes), 60);
-
-  const handleSaveLog = (e) => {
-    e.preventDefault();
-    const minutes = parseInt(logMinutes) || 0;
-    const updatedActivity = weeklyActivity.map((day, index) => {
-      if (index === currentDayIndex) return { ...day, minutes: minutes };
-      return day;
-    });
-    setWeeklyActivity(updatedActivity);
-    setLogMinutes("");
-    setIsLogModalOpen(false);
-  };
 
   const displayUsername = user?.username ?? unknownUser?.username ?? "Astronaut";
 
   // --- New Feature: Hydration ---
   const hydrationGoal = 3000;
-  const [hydration, setHydration] = useState(() => {
-     const data = localStorage.getItem("hydrationData");
-     return data ? parseInt(data) : 1000; // Mock starting data
-  });
-  const addHydration = (amount) => {
+  const [hydration, setHydration] = useState(user?.dailyLog?.hydration || 0);
+
+  useEffect(() => {
+    if (user?.dailyLog?.hydration !== undefined) {
+      setHydration(user.dailyLog.hydration);
+    }
+  }, [user?.dailyLog?.hydration]);
+
+  const addHydration = async (amount) => {
     const newAmp = Math.min(hydration + amount, hydrationGoal);
-    setHydration(newAmp);
-    localStorage.setItem("hydrationData", newAmp);
+    setHydration(newAmp); // Optimistic UI update
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/me/hydration", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ hydration: newAmp }),
+      });
+      if (!res.ok) console.error("Failed to update hydration");
+    } catch (err) {
+      console.error(err);
+    }
   };
   const hydrationPerc = Math.min((hydration / hydrationGoal) * 100, 100);
 
   // --- New Feature: PRs ---
-  const [prs] = useState(() => {
-    return [
-      { exercise: "Bench Press", weight: "225 lbs", metric: "+5 lbs" },
-      { exercise: "Squat", weight: "315 lbs", metric: "+10 lbs" },
-      { exercise: "Deadlift", weight: "405 lbs", metric: "+15 lbs" },
-    ];
-  });
+  const prs = user?.prs || [];
 
   // --- New Feature: Consistency Streak ---
-  const [streak] = useState(12);
+  const streak = user?.streak || 0;
 
   // Simplified Card Style - NO blur, NO animations, NO heavy shadows
   const simpleCard = "bg-white dark:bg-[#1a202c] border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm";

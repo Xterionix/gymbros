@@ -61,12 +61,19 @@ const userSchema = new mongoose.Schema({
     dailyLog: {
         date: { type: Date, default: Date.now }, 
         calories: { type: Number, default: 0 },
+        hydration: { type: Number, default: 0 },
         macros: {
             protein: { type: Number, default: 0 },
             carbs: { type: Number, default: 0 },
             fats: { type: Number, default: 0 }
         }
     },
+    streak: { type: Number, default: 0 },
+    prs: [{
+        exercise: String,
+        weight: String,
+        metric: String
+    }],
     gallery: [galleryItemSchema],
     weeklyActivity: [weeklyActivitySchema],
     

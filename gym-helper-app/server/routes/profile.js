@@ -106,6 +106,30 @@ router.patch("/nutrition", authenticate, async (req, res) => {
     }
 });
 
+router.patch("/hydration", authenticate, async (req, res) => {
+    try {
+        const { hydration } = req.body;
+        
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.sub ?? req.user.id,
+            {
+                "dailyLog.hydration": hydration,
+                "dailyLog.date": new Date()
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.json({ data: updatedUser });
+    } catch (err) {
+        console.error("Hydration update failed:", err);
+        res.status(500).json({ error: "Hydration update failed" });
+    }
+});
+
 router.patch("/goals", authenticate, async (req, res) => {
     try {
         const { targetCalories, protein, carbs, fats } = req.body;
