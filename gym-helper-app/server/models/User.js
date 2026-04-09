@@ -12,6 +12,9 @@ const performedExerciseSchema = new mongoose.Schema({
 
 const workoutSchema = new mongoose.Schema({
     time: Date,
+    duration: Number,
+    templateId: Number,
+    templateName: String,
     exercises: [performedExerciseSchema]
 })
 

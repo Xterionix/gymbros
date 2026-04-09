@@ -242,4 +242,80 @@ router.patch("/workouts", authenticate, async (req, res) => {
     }
 });
 
+router.post("/history", authenticate, async (req, res) => {
+    try {
+        const { duration, exercises, date, templateId, templateName } = req.body;
+        const time = date ? new Date(date) : new Date();
+        const durationMinutes = parseInt(duration) || 0;
+
+        // 1. Add to workout history
+        const newHistoryItem = { time, duration: durationMinutes, templateId, templateName, exercises: exercises || [] };
+
+        const user = await User.findById(req.user.sub);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        user.workoutHistory.push(newHistoryItem);
+
+        // 2. Increment weeklyActivity for today
+        const dayNames = ["S", "M", "T", "W", "Th", "F", "S"];
+        const todayStr = dayNames[time.getDay()];
+        
+        let foundDay = false;
+        for (let i = 0; i < user.weeklyActivity.length; i++) {
+            if (user.weeklyActivity[i].day === todayStr) {
+                user.weeklyActivity[i].minutes += durationMinutes;
+                foundDay = true;
+                break;
+            }
+        }
+        
+        // If they had no weeklyActivity schema populated, let's initialize it
+        if (!foundDay) {
+            if (user.weeklyActivity.length === 0) {
+               dayNames.forEach(d => user.weeklyActivity.push({ day: d, minutes: 0 }));
+               const todayObj = user.weeklyActivity.find(d => d.day === todayStr);
+               if (todayObj) todayObj.minutes += durationMinutes;
+            } else {
+               user.weeklyActivity.push({ day: todayStr, minutes: durationMinutes });
+            }
+        }
+
+        // 3. Recalculate streak strictly backwards
+        const activeDates = new Set(
+            user.workoutHistory.map(h => {
+                const d = new Date(h.time);
+                return d.toISOString().split("T")[0];
+            })
+        );
+        
+        let calculatedStreak = 0;
+        let checkDate = new Date(); 
+        
+        const todayKey = checkDate.toISOString().split("T")[0];
+        
+        let testYesterday = new Date(checkDate);
+        testYesterday.setDate(testYesterday.getDate() - 1);
+        const yesterdayKey = testYesterday.toISOString().split("T")[0];
+        
+        // Grace period logic: If today isn't logged yet but yesterday is, streak counts from yesterday
+        if (!activeDates.has(todayKey) && activeDates.has(yesterdayKey)) {
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        while (activeDates.has(checkDate.toISOString().split("T")[0])) {
+            calculatedStreak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        user.streak = calculatedStreak;
+
+        await user.save();
+
+        res.json({ data: user });
+    } catch (err) {
+        console.error("History logging failed:", err);
+        res.status(500).json({ error: "History logging failed" });
+    }
+});
+
 export default router;

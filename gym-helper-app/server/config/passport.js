@@ -25,13 +25,38 @@ export default function configurePassport(passport) {
                     }
 
                     if (!user) {
+                        const defaultTemplates = [
+                            {
+                                id: Date.now() + 1,
+                                name: "Push Day",
+                                description: "Chest, Shoulders, and Tricep focus.",
+                                exercises: ["Incline Bench Press", "Overhead Press", "Lateral Raises", "Tricep Pushdowns"],
+                                days: ["Monday"]
+                            },
+                            {
+                                id: Date.now() + 2,
+                                name: "Pull Day",
+                                description: "Back and Bicep focus.",
+                                exercises: ["Pull-ups", "Barbell Rows", "Face Pulls", "Bicep Curls"],
+                                days: ["Wednesday"]
+                            },
+                            {
+                                id: Date.now() + 3,
+                                name: "Leg Day",
+                                description: "Quads, Hamstrings, and General Lower Body.",
+                                exercises: ["Barbell Squats", "Romanian Deadlifts", "Leg Press", "Calf Raises"],
+                                days: ["Friday"]
+                            }
+                        ];
+
                         user = await User.create({
                             googleId,
                             provider: 'google',
                             username: name.toLowerCase().replace(/\s+/g, ''),
                             email,
                             name,
-                            avatar
+                            avatar,
+                            workoutTemplates: defaultTemplates
                         });
                     } else if (!user.googleId) {
                         // If a user existed by email, attach googleId
