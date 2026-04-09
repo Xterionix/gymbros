@@ -71,6 +71,16 @@ const userSchema = new mongoose.Schema({
             fats: { type: Number, default: 0 }
         }
     },
+    dailyTrackingHistory: [{
+        date: Date,
+        calories: { type: Number, default: 0 },
+        hydration: { type: Number, default: 0 },
+        macros: {
+            protein: { type: Number, default: 0 },
+            carbs: { type: Number, default: 0 },
+            fats: { type: Number, default: 0 }
+        }
+    }],
     streak: { type: Number, default: 0 },
     prs: [{
         exercise: String,

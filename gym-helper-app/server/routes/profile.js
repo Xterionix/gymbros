@@ -5,6 +5,7 @@ import fs from "fs";
 import passport from "passport";
 import { User } from "../models/User.js"; // adjust path to your User model
 import { authenticate } from "../middleware/auth.middleware.js"; 
+import { checkAndRolloverDailyLog } from "../utils/rollover.js";
 
 
 const router = express.Router();
@@ -81,25 +82,22 @@ router.patch("/nutrition", authenticate, async (req, res) => {
     try {
         const { calories, protein, carbs, fats } = req.body;
         
-        // Simple logic: Update the dailyLog fields
-        // In a real app, you might check if 'dailyLog.date' is today, if not, reset it.
-        const updatedUser = await User.findByIdAndUpdate(
-            req.user.sub,
-            {
-                "dailyLog.calories": calories,
-                "dailyLog.macros.protein": protein,
-                "dailyLog.macros.carbs": carbs,
-                "dailyLog.macros.fats": fats,
-                "dailyLog.date": new Date()
-            },
-            { new: true }
-        );
-
-        if (!updatedUser) {
+        let user = await User.findById(req.user.sub);
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res.json({ data: updatedUser });
+        await checkAndRolloverDailyLog(user);
+        
+        user.dailyLog.calories = calories;
+        user.dailyLog.macros.protein = protein;
+        user.dailyLog.macros.carbs = carbs;
+        user.dailyLog.macros.fats = fats;
+        user.dailyLog.date = new Date();
+        
+        await user.save();
+
+        res.json({ data: user });
     } catch (err) {
         console.error("Nutrition update failed:", err);
         res.status(500).json({ error: "Nutrition update failed" });
@@ -110,20 +108,19 @@ router.patch("/hydration", authenticate, async (req, res) => {
     try {
         const { hydration } = req.body;
         
-        const updatedUser = await User.findByIdAndUpdate(
-            req.user.sub ?? req.user.id,
-            {
-                "dailyLog.hydration": hydration,
-                "dailyLog.date": new Date()
-            },
-            { new: true }
-        );
-
-        if (!updatedUser) {
+        let user = await User.findById(req.user.sub ?? req.user.id);
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res.json({ data: updatedUser });
+        await checkAndRolloverDailyLog(user);
+
+        user.dailyLog.hydration = hydration;
+        user.dailyLog.date = new Date();
+        
+        await user.save();
+
+        res.json({ data: user });
     } catch (err) {
         console.error("Hydration update failed:", err);
         res.status(500).json({ error: "Hydration update failed" });

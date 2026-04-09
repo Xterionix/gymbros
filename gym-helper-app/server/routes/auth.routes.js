@@ -3,6 +3,7 @@ import passport from 'passport';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { User } from '../models/User.js';
 import { googleCallback } from '../controllers/auth.controller.js';
+import { checkAndRolloverDailyLog } from '../utils/rollover.js';
 
 const router = express.Router();
 
@@ -17,6 +18,12 @@ router.get('/me', authenticate, async (req, res, next) => {
                 message : "User does not exists"
             });
         }
+
+        const needsSave = await checkAndRolloverDailyLog(user);
+        if (needsSave) {
+            await user.save();
+        }
+
         res.status(200).json({
             status : 200,
             success: true,
