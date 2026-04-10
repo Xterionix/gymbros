@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema({
     customExercises: [exerciseSchema],
     nutrition: {
         targetCalories: Number,
+        hydrationGoal: Number,
         macros: {
             protein: Number,
             carbs: Number,

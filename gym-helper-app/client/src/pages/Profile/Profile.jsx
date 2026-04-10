@@ -1,5 +1,4 @@
 import { HiOutlinePencilAlt, HiMoon, HiSun, HiCamera } from "react-icons/hi";
-import { IoMdNutrition } from "react-icons/io";
 import { GrScorecard } from "react-icons/gr";
 import { GrGallery } from "react-icons/gr";
 import { LuCalendarFold } from "react-icons/lu";
@@ -63,31 +62,16 @@ export default function Profile() {
     }
   };
 
-  // --- Nutrition Modal State ---
-  const [showNutritionModal, setShowNutritionModal] = useState(false);
-  const [nutritionForm, setNutritionForm] = useState({
-    calories: 0, protein: 0, carbs: 0, fats: 0,
-  });
-
   // --- Goals Modal State ---
   const [showGoalsModal, setShowGoalsModal] = useState(false);
   const [goalsForm, setGoalsForm] = useState({
-    targetCalories: 0, protein: 0, carbs: 0, fats: 0,
+    targetCalories: 0, hydrationGoal: 0, protein: 0, carbs: 0, fats: 0,
   });
-
-  const openNutritionModal = () => {
-    setNutritionForm({
-      calories: user?.dailyLog?.calories || 0,
-      protein: user?.dailyLog?.macros?.protein || 0,
-      carbs: user?.dailyLog?.macros?.carbs || 0,
-      fats: user?.dailyLog?.macros?.fats || 0,
-    });
-    setShowNutritionModal(true);
-  };
 
   const openGoalsModal = () => {
     setGoalsForm({
       targetCalories: user?.nutrition?.targetCalories || 0,
+      hydrationGoal: user?.nutrition?.hydrationGoal || 0,
       protein: user?.nutrition?.macros?.protein || 0,
       carbs: user?.nutrition?.macros?.carbs || 0,
       fats: user?.nutrition?.macros?.fats || 0,
@@ -95,31 +79,8 @@ export default function Profile() {
     setShowGoalsModal(true);
   };
 
-  const handleNutritionChange = (e) => {
-    setNutritionForm({ ...nutritionForm, [e.target.name]: Number(e.target.value) });
-  };
-
   const handleGoalsChange = (e) => {
     setGoalsForm({ ...goalsForm, [e.target.name]: Number(e.target.value) });
-  };
-
-  const handleSaveNutrition = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/me/nutrition", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(nutritionForm),
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setUser(json.data);
-        setShowNutritionModal(false);
-      }
-    } catch (err) {
-      console.error("Failed to save nutrition", err);
-    }
   };
 
   const handleSaveGoals = async (e) => {
@@ -222,17 +183,6 @@ export default function Profile() {
            
            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-max">
               <button
-                onClick={openNutritionModal}
-                className="group flex flex-col border border-gray-200 dark:border-gray-800 items-start justify-center p-6 bg-gray-50 dark:bg-[#0b101e] hover:border-blue-500 dark:hover:border-blue-500 rounded-xl shadow-sm transition-all duration-300 cursor-pointer text-left"
-              >
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mb-4 group-hover:scale-110 transition-transform">
-                  <IoMdNutrition className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <span className="text-lg font-bold text-gray-900 dark:text-white mb-1">Nutrition</span>
-                <span className="text-xs font-semibold text-gray-500">Log daily macros & calories</span>
-              </button>
-
-              <button
                 onClick={openGoalsModal}
                 className="group flex flex-col border border-gray-200 dark:border-gray-800 items-start justify-center p-6 bg-gray-50 dark:bg-[#0b101e] hover:border-green-500 dark:hover:border-green-500 rounded-xl shadow-sm transition-all duration-300 cursor-pointer text-left"
               >
@@ -271,40 +221,6 @@ export default function Profile() {
 
 
 
-      {/* --- Nutrition Modal --- */}
-      {showNutritionModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-sans">
-          <div className="bg-white dark:bg-[#1a202c] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 w-full max-w-sm">
-            <h2 className="text-xl font-bold mb-6 text-black dark:text-white">Log Nutrition</h2>
-            <form onSubmit={handleSaveNutrition} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Total Calories</label>
-                <input type="number" name="calories" value={nutritionForm.calories} onChange={handleNutritionChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
-              </div>
-              <div className="flex justify-between gap-3">
-                <div className="flex flex-col gap-1.5 w-1/3">
-                  <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Protein (g)</label>
-                  <input type="number" name="protein" value={nutritionForm.protein} onChange={handleNutritionChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
-                </div>
-                <div className="flex flex-col gap-1.5 w-1/3">
-                  <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Carbs (g)</label>
-                  <input type="number" name="carbs" value={nutritionForm.carbs} onChange={handleNutritionChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
-                </div>
-                <div className="flex flex-col gap-1.5 w-1/3">
-                  <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Fats (g)</label>
-                  <input type="number" name="fats" value={nutritionForm.fats} onChange={handleNutritionChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
-                </div>
-              </div>
-              <div className="border-t border-gray-200 dark:border-gray-800 pt-4 mt-2"></div>
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setShowNutritionModal(false)} className="px-5 py-2.5 text-sm font-bold bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Cancel</button>
-                <button type="submit" className="px-5 py-2.5 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition-colors">Save</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* --- Goals Modal --- */}
       {showGoalsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-sans">
@@ -314,6 +230,10 @@ export default function Profile() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Target Calories</label>
                 <input type="number" name="targetCalories" value={goalsForm.targetCalories} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Water Goal (ml)</label>
+                <input type="number" name="hydrationGoal" value={goalsForm.hydrationGoal} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
               <div className="flex justify-between gap-3">
                 <div className="flex flex-col gap-1.5 w-1/3">

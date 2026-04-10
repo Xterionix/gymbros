@@ -44,7 +44,7 @@ export default function Home() {
   const displayUsername = user?.username ?? unknownUser?.username ?? "Astronaut";
 
   // --- New Feature: Hydration ---
-  const hydrationGoal = 3000;
+  const hydrationGoal = user?.nutrition?.hydrationGoal ?? 3000;
   const [hydration, setHydration] = useState(user?.dailyLog?.hydration || 0);
 
   useEffect(() => {

@@ -129,15 +129,22 @@ router.patch("/hydration", authenticate, async (req, res) => {
 
 router.patch("/goals", authenticate, async (req, res) => {
     try {
-        const { targetCalories, protein, carbs, fats } = req.body;
+    const { targetCalories, hydrationGoal, protein, carbs, fats } = req.body;
+    const userId = req.user.sub ?? req.user.id;
+
+    const existingUser = await User.findById(userId).select("nutrition");
+    if (!existingUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
         
         const updatedUser = await User.findByIdAndUpdate(
-            req.user.sub,
+      userId,
             {
-                "nutrition.targetCalories": targetCalories,
-                "nutrition.macros.protein": protein,
-                "nutrition.macros.carbs": carbs,
-                "nutrition.macros.fats": fats
+        "nutrition.targetCalories": targetCalories ?? existingUser.nutrition?.targetCalories ?? 0,
+        "nutrition.hydrationGoal": hydrationGoal ?? existingUser.nutrition?.hydrationGoal ?? 3000,
+        "nutrition.macros.protein": protein ?? existingUser.nutrition?.macros?.protein ?? 0,
+        "nutrition.macros.carbs": carbs ?? existingUser.nutrition?.macros?.carbs ?? 0,
+        "nutrition.macros.fats": fats ?? existingUser.nutrition?.macros?.fats ?? 0
             },
             { new: true }
         );
@@ -312,6 +319,62 @@ router.post("/history", authenticate, async (req, res) => {
     } catch (err) {
         console.error("History logging failed:", err);
         res.status(500).json({ error: "History logging failed" });
+    }
+});
+
+router.post("/nutrition/history", authenticate, async (req, res) => {
+    try {
+        const { date, calories, hydration, protein, carbs, fats } = req.body;
+
+        if (!date) {
+            return res.status(400).json({ error: "Date is required" });
+        }
+
+        const targetDate = new Date(date);
+        const today = new Date();
+        
+        let user = await User.findById(req.user.sub ?? req.user.id);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        if (targetDate.toDateString() === today.toDateString()) {
+            if (calories !== undefined && calories !== "") user.dailyLog.calories = Number(calories);
+            if (hydration !== undefined && hydration !== "") user.dailyLog.hydration = Number(hydration);
+            if (protein !== undefined && protein !== "") user.dailyLog.macros.protein = Number(protein);
+            if (carbs !== undefined && carbs !== "") user.dailyLog.macros.carbs = Number(carbs);
+            if (fats !== undefined && fats !== "") user.dailyLog.macros.fats = Number(fats);
+        } else {
+            const existingEntryIndex = user.dailyTrackingHistory.findIndex(entry => 
+                new Date(entry.date).toDateString() === targetDate.toDateString()
+            );
+
+            if (existingEntryIndex > -1) {
+                if (calories !== undefined && calories !== "") user.dailyTrackingHistory[existingEntryIndex].calories = Number(calories);
+                if (hydration !== undefined && hydration !== "") user.dailyTrackingHistory[existingEntryIndex].hydration = Number(hydration);
+                if (protein !== undefined && protein !== "") user.dailyTrackingHistory[existingEntryIndex].macros.protein = Number(protein);
+                if (carbs !== undefined && carbs !== "") user.dailyTrackingHistory[existingEntryIndex].macros.carbs = Number(carbs);
+                if (fats !== undefined && fats !== "") user.dailyTrackingHistory[existingEntryIndex].macros.fats = Number(fats);
+            } else {
+                user.dailyTrackingHistory.push({
+                    date: targetDate,
+                    calories: calories ? Number(calories) : 0,
+                    hydration: hydration ? Number(hydration) : 0,
+                    macros: {
+                        protein: protein ? Number(protein) : 0,
+                        carbs: carbs ? Number(carbs) : 0,
+                        fats: fats ? Number(fats) : 0
+                    }
+                });
+            }
+            user.dailyTrackingHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        await user.save();
+        res.json({ data: user });
+    } catch (err) {
+        console.error("Historical nutrition logging failed:", err);
+        res.status(500).json({ error: "Historical nutrition logging failed" });
     }
 });
 
