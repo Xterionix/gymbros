@@ -64,27 +64,28 @@ export default function Gallery() {
     new Date(b.date) - new Date(a.date)
   ) || [];
 
+  const simpleCard = "bg-white dark:bg-[#1a202c] border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm";
+
   return (
-    <main className="relative h-[calc(100vh-5rem)] overflow-hidden bg-slate-100 text-slate-900 dark:bg-[#0b101e] dark:text-white">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl dark:bg-blue-500/20" />
-        <div className="absolute right-0 top-16 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl dark:bg-orange-500/15" />
-        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl dark:bg-emerald-500/10" />
+    <main className="flex flex-col h-[calc(100vh-5rem)] bg-slate-100 text-slate-900 dark:bg-[#0b101e] dark:text-gray-100 p-4 lg:p-6 overflow-hidden font-sans">
+      <div className="shrink-0 mb-4">
+        <p className="text-xs uppercase tracking-widest text-blue-500 mb-1 font-semibold">Progress Gallery</p>
+        <h1 className="text-3xl lg:text-4xl font-extrabold dark:text-white">Uploaded images</h1>
       </div>
 
-      <div className="relative flex h-full flex-col gap-4 p-4 lg:p-6">
-        <header className="shrink-0 rounded-[2rem] border border-white/10 bg-white/80 px-5 py-4 shadow-[0_18px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:bg-[#111827]/85 dark:shadow-[0_18px_60px_rgba(0,0,0,0.35)] lg:px-6">
+      <div className="flex h-full flex-col gap-4 min-h-0">
+        <header className={`${simpleCard} shrink-0 px-5 py-4 lg:px-6`}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/profile")}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:-translate-x-0.5 hover:border-blue-200 hover:text-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-blue-500/40 dark:hover:text-blue-400"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-slate-700 transition hover:text-blue-600 dark:border-gray-700 dark:bg-[#0b101e] dark:text-slate-200 dark:hover:text-blue-400"
               >
                 <IoArrowBack className="h-5 w-5" />
               </button>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-blue-600 dark:text-blue-400">Progress Gallery</p>
-                <h1 className="text-2xl font-black leading-tight lg:text-3xl">Uploaded images</h1>
+                <h2 className="text-xl font-black leading-tight lg:text-2xl">Current gallery</h2>
               </div>
             </div>
 
@@ -99,7 +100,7 @@ export default function Gallery() {
               <button
                 onClick={() => fileInputRef.current.click()}
                 disabled={isUploading}
-                className="inline-flex items-center gap-3 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(15,23,42,0.22)] transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-slate-950"
+                className="inline-flex items-center gap-3 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-slate-950 dark:hover:bg-gray-100"
               >
                 {isUploading ? (
                   <span className="animate-pulse">Uploading...</span>
@@ -114,26 +115,26 @@ export default function Gallery() {
           </div>
         </header>
 
-        <section className="min-h-0 rounded-[2rem] border border-white/10 bg-white/80 p-4 shadow-[0_18px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:bg-[#111827]/85 dark:shadow-[0_18px_60px_rgba(0,0,0,0.35)] lg:p-5">
+        <section className={`${simpleCard} min-h-0 p-4 lg:p-5`}>
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Uploaded images</p>
               <h2 className="mt-1 text-xl font-black text-slate-900 dark:text-white">Current gallery</h2>
             </div>
-            <p className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+            <p className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-slate-500 dark:border-gray-700 dark:bg-[#0b101e] dark:text-slate-400">
               {sortedGallery.length} total
             </p>
           </div>
 
           {sortedGallery.length === 0 ? (
-            <div className="flex h-[calc(100%-3.5rem)] min-h-[260px] flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300 bg-slate-50 text-center dark:border-white/10 dark:bg-white/5">
+            <div className="flex h-[calc(100%-3.5rem)] min-h-[260px] flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 text-center dark:border-gray-700 dark:bg-[#0b101e]">
               <p className="text-lg font-semibold text-slate-900 dark:text-white">No uploaded images yet.</p>
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Use Add Photo to start the gallery.</p>
             </div>
           ) : (
             <div className="grid max-h-[calc(100%-3.5rem)] min-h-0 grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {sortedGallery.map((item, index) => (
-                <div key={item._id} className="group relative overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-950 shadow-lg dark:border-white/10">
+                <div key={item._id} className="group relative overflow-hidden rounded-xl border border-gray-200 bg-slate-950 shadow-sm dark:border-gray-700">
                   <div className="relative aspect-[3/4] overflow-hidden">
                     <img
                       src={item.url}
@@ -143,7 +144,7 @@ export default function Gallery() {
                     <div className="absolute inset-0 bg-black/40" />
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white opacity-0 backdrop-blur-sm transition group-hover:opacity-100 hover:bg-red-600"
+                      className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white opacity-0 transition group-hover:opacity-100 hover:bg-red-600"
                       title="Delete Photo"
                     >
                       <FiTrash2 className="h-4 w-4" />
