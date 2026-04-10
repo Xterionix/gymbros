@@ -77,12 +77,6 @@ export default function Gallery() {
         <header className={`${simpleCard} shrink-0 px-5 py-4 lg:px-6`}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate("/profile")}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-slate-700 transition hover:text-blue-600 dark:border-gray-700 dark:bg-[#0b101e] dark:text-slate-200 dark:hover:text-blue-400"
-              >
-                <IoArrowBack className="h-5 w-5" />
-              </button>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-blue-600 dark:text-blue-400">Progress Gallery</p>
                 <h2 className="text-xl font-black leading-tight lg:text-2xl">Current gallery</h2>
