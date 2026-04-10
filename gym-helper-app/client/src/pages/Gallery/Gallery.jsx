@@ -140,7 +140,7 @@ export default function Gallery() {
                       alt={`Progress ${index + 1}`}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-black/40" />
                     <button
                       onClick={() => handleDelete(item._id)}
                       className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white opacity-0 backdrop-blur-sm transition group-hover:opacity-100 hover:bg-red-600"
