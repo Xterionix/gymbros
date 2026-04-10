@@ -11,6 +11,7 @@ function toPublicUser(userDoc) {
         _id: userDoc._id,
         name: userDoc.name,
         username: userDoc.username,
+        bio: userDoc.bio || "",
         profilePicture: userDoc.profilePicture,
     };
 }
@@ -19,7 +20,7 @@ async function resolveActiveMatchOrClear(userDoc) {
     if (!userDoc?.activeMatch) return null;
 
     const matchUser = await User.findById(userDoc.activeMatch)
-        .select("name username profilePicture activeMatch")
+        .select("name username bio profilePicture activeMatch")
         .lean();
 
     if (!matchUser) {
@@ -70,7 +71,7 @@ export const getDiscoveryUsers = async (req, res) => {
             likesSent: { $ne: currentUserIdStr },
             likesReceived: { $ne: currentUserIdStr },
         })
-            .select("name username profilePicture")
+            .select("name username bio profilePicture")
             .lean();
 
         return res.status(200).json({
@@ -115,8 +116,8 @@ export const getPendingMatches = async (req, res) => {
         const currentUserIdStr = currentUserId.toString();
         const me = await User.findById(currentUserId)
             .select("likesReceived likesSent activeMatch")
-            .populate("likesReceived", "name username profilePicture activeMatch")
-            .populate("likesSent", "name username profilePicture activeMatch");
+            .populate("likesReceived", "name username bio profilePicture activeMatch")
+            .populate("likesSent", "name username bio profilePicture activeMatch");
 
         if (!me) {
             return res.status(404).json({ success: false, message: "User not found" });
@@ -163,7 +164,7 @@ export const likeUser = async (req, res) => {
         }
 
         if (me.activeMatch) {
-            const matchUser = await User.findById(me.activeMatch).select("name username profilePicture").lean();
+            const matchUser = await User.findById(me.activeMatch).select("name username bio profilePicture").lean();
             return res.status(409).json({
                 success: false,
                 message: "You already have an active match",

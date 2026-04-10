@@ -284,6 +284,7 @@ export default function Match() {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{pendingUser.name || "Unknown user"}</p>
                       <p className="text-xs text-gray-600 dark:text-gray-300 truncate">{pendingUser.username || "@gymbro"}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{pendingUser.bio?.trim() || "No bio yet."}</p>
                     </div>
                   </div>
                   <button
@@ -315,6 +316,7 @@ export default function Match() {
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{sentUser.name || "Unknown user"}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-300 truncate">{sentUser.username || "@gymbro"}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{sentUser.bio?.trim() || "No bio yet."}</p>
                   </div>
                   <span className="ml-auto shrink-0 rounded-full bg-sky-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:bg-sky-900/50 dark:text-sky-300">
                     Waiting
@@ -345,6 +347,7 @@ export default function Match() {
               <div>
                 <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{activeMatch.name || "Unknown user"}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{activeMatch.username || "@workoutbuddy"}</p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm break-words">{activeMatch.bio?.trim() || "No bio yet."}</p>
               </div>
             </div>
             <button
@@ -379,6 +382,7 @@ export default function Match() {
                   <div>
                     <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">{currentCandidate.name || "Unknown user"}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{currentCandidate.username || "@gymbro"}</p>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm break-words line-clamp-3">{currentCandidate.bio?.trim() || "No bio yet."}</p>
                   </div>
                 </div>
 

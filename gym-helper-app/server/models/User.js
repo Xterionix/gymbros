@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema({
     provider: String,
     name: String,
     username: String,
+    bio: { type: String, default: "" },
     profilePicture: String,
     workoutHistory: [workoutSchema], //! Consider moving this to its own model; Users could log a lot of workouts
     workoutTemplates: [workoutTemplateSchema],

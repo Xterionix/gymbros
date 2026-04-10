@@ -15,6 +15,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editUsername, setEditUsername] = useState("");
+  const [editBio, setEditBio] = useState("");
   const fileInputRef = useRef(null);
   
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function Profile() {
   const startEditing = () => {
     setEditName(user?.name || "");
     setEditUsername(user?.username || "");
+    setEditBio(user?.bio || "");
     setIsEditing(true);
   };
   
@@ -31,7 +33,7 @@ export default function Profile() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name: editName, username: editUsername }),
+        body: JSON.stringify({ name: editName, username: editUsername, bio: editBio }),
       });
       if (res.ok) {
         const json = await res.json();
@@ -155,6 +157,29 @@ export default function Profile() {
              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-6 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full mt-2 truncate max-w-full">
                {user?.username ?? unknownUser.username}
              </p>
+          )}
+
+          {isEditing ? (
+            <div className="w-full mb-6">
+              <textarea
+                value={editBio}
+                onChange={(e) => setEditBio(e.target.value.slice(0, 280))}
+                className="w-full text-sm text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-[#0b101e] border border-gray-300 dark:border-gray-700 rounded-md p-2.5 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                rows={4}
+                maxLength={280}
+                placeholder="Tell other gymbros about your workout style, goals, or vibe."
+              />
+              <p className="mt-1 text-right text-[10px] font-semibold text-gray-500 dark:text-gray-400">
+                {editBio.length}/280
+              </p>
+            </div>
+          ) : (
+            <div className="w-full mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#0b101e] p-3 text-left">
+              <p className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bold mb-1">Bio</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed break-words">
+                {user?.bio?.trim() ? user.bio : "No bio added yet."}
+              </p>
+            </div>
           )}
 
           {isEditing ? (

@@ -43,11 +43,23 @@ router.get('/me', authenticate, async (req, res, next) => {
 router.patch('/me', authenticate, async (req, res) => {
   try {
     const userId = req.user.id || req.user.sub;
-    const { name, username, avatar } = req.body;
+    const { name, username, bio, avatar } = req.body;
+
+    const normalizedBio = typeof bio === 'string' ? bio.trim().slice(0, 280) : undefined;
+
+    const updatePayload = {
+      name,
+      username,
+      avatar,
+    };
+
+    if (typeof normalizedBio === 'string') {
+      updatePayload.bio = normalizedBio;
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, username, avatar },
+      updatePayload,
       { new: true }
     ).select('-password');
 

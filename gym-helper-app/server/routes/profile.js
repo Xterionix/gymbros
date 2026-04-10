@@ -31,10 +31,17 @@ const upload = multer({ storage });
 
 router.patch("/", authenticate, async (req, res) => {
   try {
-    const { name, username } = req.body;
+    const { name, username, bio } = req.body;
+    const normalizedBio = typeof bio === "string" ? bio.trim().slice(0, 280) : undefined;
+
+    const updatePayload = { name, username };
+    if (typeof normalizedBio === "string") {
+      updatePayload.bio = normalizedBio;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       req.user.sub, 
-      { name, username }, 
+      updatePayload, 
       { new: true }
     );
     if (!updatedUser) {

@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export const unknownUser = {
     name: "???",
     username: "@unknown",
+    bio: "No bio set yet.",
     email: "???@unknown.com",
     profilePicture: "/assets/croc-dark.png",
 }
