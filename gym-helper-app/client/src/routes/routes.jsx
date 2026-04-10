@@ -10,6 +10,7 @@ import LoginPage from "../pages/LoginPage.jsx";
 import Gallery from "../pages/Gallery/Gallery.jsx";
 import Nutrition from "../pages/Nutrition/Nutrition.jsx";
 import Calendar from "../pages/Calendar/Calendar.jsx";
+import Match from "../pages/Match/Match.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "nutrition", element: <Nutrition /> },
       { path: "gallery", element: <Gallery /> },
       { path: "calendar", element: <Calendar /> },
+      { path: "match", element: <Match /> },
       { path: "auth", element: <AuthGate /> },
     ],
     },

@@ -90,6 +90,9 @@ const userSchema = new mongoose.Schema({
     }],
     gallery: [galleryItemSchema],
     weeklyActivity: [weeklyActivitySchema],
+    likesSent: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    likesReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    activeMatch: { type: mongoose.Schema.Types.ObjectId, ref: "user", default: null },
     
 })
 

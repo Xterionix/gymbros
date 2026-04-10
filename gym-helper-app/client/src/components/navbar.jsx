@@ -1,11 +1,16 @@
-import { Link } from "react-router-dom";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { IoPersonOutline } from "react-icons/io5";
 import { HiHome } from "react-icons/hi";
 import { IoMdNutrition } from "react-icons/io";
-import { NavLink } from "react-router-dom";
+import { GiBiceps } from "react-icons/gi";
+import { NavLink, useLocation } from "react-router-dom";
+import { useMatchContext } from "../contexts/match/MatchContext.jsx";
 
 export default function Navbar() {
+  const location = useLocation();
+  const { unreadPendingCount } = useMatchContext();
+  const showUnreadChip = location.pathname !== "/match" && unreadPendingCount > 0;
+
   return (
     <nav className="bg-white dark:bg-[#1a202c] border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 fixed bottom-0 left-0 w-full pb-safe z-50 overflow-hidden shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
       <ul className="list-none flex justify-around items-center w-full max-w-md mx-auto py-2">
@@ -43,6 +48,25 @@ export default function Navbar() {
           >
             <IoMdNutrition className="w-6 h-6 mb-1" />
             <span className="text-[10px] uppercase font-bold tracking-wider">Nutrition</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/match"
+            className={({ isActive }) =>
+              `flex flex-col items-center p-2 rounded-lg transition-colors min-w-[64px] ${isActive ? "text-blue-600 dark:text-blue-400" : "hover:text-gray-900 dark:hover:text-gray-200"
+              }`
+            }
+          >
+            <div className="relative">
+              <GiBiceps className="w-6 h-6 mb-1" />
+              {showUnreadChip ? (
+                <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] leading-4 text-center font-bold">
+                  {unreadPendingCount > 9 ? "9+" : unreadPendingCount}
+                </span>
+              ) : null}
+            </div>
+            <span className="text-[10px] uppercase font-bold tracking-wider">Match</span>
           </NavLink>
         </li>
         <li>
