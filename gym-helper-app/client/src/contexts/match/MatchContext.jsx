@@ -22,8 +22,15 @@ export function MatchProvider({ children }) {
       });
       const json = await response.json();
       if (response.ok) {
-        setPendingMatches(json?.data?.incoming || []);
-        setSentMatches(json?.data?.outgoing || []);
+        const incoming = json?.data?.incoming || [];
+        const outgoing = json?.data?.outgoing || [];
+
+        setPendingMatches(incoming);
+        setSentMatches(outgoing);
+
+        if (!isMatchPageActive) {
+          setUnreadPendingCount(incoming.length);
+        }
       }
     } catch (error) {
       setPendingMatches([]);
