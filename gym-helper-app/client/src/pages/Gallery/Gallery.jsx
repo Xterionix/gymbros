@@ -82,8 +82,19 @@ export default function Gallery() {
                 <h2 className="text-xl font-black leading-tight lg:text-2xl">Current gallery</h2>
               </div>
             </div>
+          </div>
+        </header>
 
+        <section className={`${simpleCard} min-h-0 p-4 lg:p-5`}>
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Uploaded images</p>
+              <h2 className="mt-1 text-xl font-black text-slate-900 dark:text-white">Current gallery</h2>
+            </div>
             <div className="flex items-center gap-3">
+              <p className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-slate-500 dark:border-gray-700 dark:bg-[#0b101e] dark:text-slate-400">
+                {sortedGallery.length} total
+              </p>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -94,7 +105,7 @@ export default function Gallery() {
               <button
                 onClick={() => fileInputRef.current.click()}
                 disabled={isUploading}
-                className="inline-flex items-center gap-3 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-slate-950 dark:hover:bg-gray-100"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-slate-950 dark:hover:bg-gray-100"
               >
                 {isUploading ? (
                   <span className="animate-pulse">Uploading...</span>
@@ -106,18 +117,6 @@ export default function Gallery() {
                 )}
               </button>
             </div>
-          </div>
-        </header>
-
-        <section className={`${simpleCard} min-h-0 p-4 lg:p-5`}>
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Uploaded images</p>
-              <h2 className="mt-1 text-xl font-black text-slate-900 dark:text-white">Current gallery</h2>
-            </div>
-            <p className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-slate-500 dark:border-gray-700 dark:bg-[#0b101e] dark:text-slate-400">
-              {sortedGallery.length} total
-            </p>
           </div>
 
           {sortedGallery.length === 0 ? (
