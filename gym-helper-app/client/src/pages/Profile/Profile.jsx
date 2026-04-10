@@ -224,27 +224,29 @@ export default function Profile() {
       {/* --- Goals Modal --- */}
       {showGoalsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-sans">
-          <div className="bg-white dark:bg-[#1a202c] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 w-full max-w-sm">
+          <div className="bg-white dark:bg-[#1a202c] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-black dark:text-white">Nutrition Targets</h2>
-            <form onSubmit={handleSaveGoals} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
+            <form onSubmit={handleSaveGoals} className="grid gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Target Calories</label>
                 <input type="number" name="targetCalories" value={goalsForm.targetCalories} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Water Goal (ml)</label>
+                  <input type="number" name="hydrationGoal" value={goalsForm.hydrationGoal} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Water Goal (ml)</label>
-                <input type="number" name="hydrationGoal" value={goalsForm.hydrationGoal} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
-              </div>
-              <div className="flex justify-between gap-3">
-                <div className="flex flex-col gap-1.5 w-1/3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Protein (g)</label>
                   <input type="number" name="protein" value={goalsForm.protein} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
                 </div>
-                <div className="flex flex-col gap-1.5 w-1/3">
+                <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Carbs (g)</label>
                   <input type="number" name="carbs" value={goalsForm.carbs} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
                 </div>
-                <div className="flex flex-col gap-1.5 w-1/3">
+                <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] uppercase tracking-wider text-gray-500 font-bold text-center">Fats (g)</label>
                   <input type="number" name="fats" value={goalsForm.fats} onChange={handleGoalsChange} className="p-3 border rounded-lg border-gray-300 dark:border-gray-700 dark:bg-[#0b101e] dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-center" />
                 </div>
