@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../../contexts/theme/AuthContext";
-import { IoArrowBack } from "react-icons/io5";
 import { FiPlus, FiTrash2 } from "react-icons/fi"; // Icon for upload
 import { useNavigate } from "react-router-dom";
 
@@ -74,18 +73,7 @@ export default function Gallery() {
       </div>
 
       <div className="flex h-full flex-col gap-4 min-h-0">
-        <header className={`${simpleCard} shrink-0 px-5 py-4 lg:px-6`}>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-blue-600 dark:text-blue-400">Progress Gallery</p>
-                <h2 className="text-xl font-black leading-tight lg:text-2xl">Current gallery</h2>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <section className={`${simpleCard} min-h-0 p-4 lg:p-5`}>
+        <section className={`${simpleCard} flex-1 min-h-0 p-4 lg:p-5`}>
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Uploaded images</p>
